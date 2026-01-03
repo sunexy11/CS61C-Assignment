@@ -19,15 +19,27 @@
 #include "imageloader.h"
 
 //Determines what color the cell at the given row/col should be. This should not affect Image, and should allocate space for a new Color.
-Color *evaluateOnePixel(Image *image, int row, int col)
-{
-	//YOUR CODE HERE
+Color *evaluateOnePixel(Image *image, int row, int col) {
+    Color *color = (Color *)malloc(sizeof(Color));
+    if (image->image[row][col].B & 0x01U) color->R = color->G = color->B = 0xffU;
+    else color->R = color->G = color->B = 0x00U; 
+    return color;
 }
 
 //Given an image, creates a new image extracting the LSB of the B channel.
-Image *steganography(Image *image)
-{
-	//YOUR CODE HERE
+Image *steganography(Image *image) {
+    Image *newimage = (Image *)malloc(sizeof(Image));
+    newimage->rows = image->rows, newimage->cols = image->cols;
+    newimage->image = (Color **)malloc(sizeof(Color *) * newimage->rows);
+    for (int i = 0; i < newimage->rows; ++i) {
+        newimage->image[i] = (Color *)malloc(sizeof(Color) * newimage->cols);
+        for (int j = 0; j < newimage->cols; ++j) {
+            Color *color = evaluateOnePixel(image, i, j);
+            newimage->image[i][j] = *color;
+            free(color);
+        }
+    }
+    return newimage;
 }
 
 /*
@@ -43,7 +55,12 @@ If the input is not correct, a malloc fails, or any other error occurs, you shou
 Otherwise, you should return from main with code 0.
 Make sure to free all memory before returning!
 */
-int main(int argc, char **argv)
-{
-	//YOUR CODE HERE
+int main(int argc, char **argv) {
+    if (argc != 2) return -1;
+    Image *image = readData(argv[1]);
+    Image *newimage = steganography(image);
+    writeData(newimage);
+    freeImage(image);
+    freeImage(newimage);
+    return 0;
 }

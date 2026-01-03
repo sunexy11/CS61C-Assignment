@@ -16,10 +16,10 @@ typedef struct Image
 } Image;
 
 //Loads an image from a ppm file, and converts to an Image object
-extern Image *readData(char *filename);
+extern Image *readData(char *filename); 
 
 //Writes an image to stdout
 extern void writeData(Image *image);
 
 //Frees an image and all its associated data
-extern void freeImage(Image *image);
+extern void freeImage(Image *image); 
